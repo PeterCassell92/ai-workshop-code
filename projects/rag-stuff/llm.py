@@ -1,5 +1,6 @@
+import os
 from dotenv import load_dotenv
-from litellm import completion
+from anthropic import Anthropic
 from models import QuestionContext
 
 load_dotenv()
@@ -7,8 +8,8 @@ load_dotenv()
 
 def build_prompt(question: str, context: str) -> str:
     """Build a prompt with the question and context"""
-    return f"""Based on the following information about Jeff Bezos, please answer this question:
-    
+    return f"""Based on the following information from Star Wars scripts, please answer this question:
+
 Question: {question}
 
 Information:
@@ -21,23 +22,32 @@ Please provide a concise and detailed answer based only on the information provi
 # Function to query an LLM model with a specific model
 def llm_query(user_query: str, model: str) -> str:
     try:
-        # Call the LLM through LiteLLM with the specified model
-        response = completion(
+        # Initialize Anthropic client
+        client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+        # Call the Anthropic API
+        response = client.messages.create(
             model=model,
+            max_tokens=1000,
             messages=[{"role": "user", "content": user_query}],
         )
 
-        # Check response structure and handle potential None values
-        if (
-            hasattr(response, "choices")
-            and response.choices
-            and hasattr(response.choices[0], "message")
-        ):
-            content = response.choices[0].message.content
-            return content if content is not None else "No content returned"
+        # Extract the content from the response
+        if response and response.content:
+            # Anthropic returns a list of content blocks
+            # We'll join them if there are multiple
+            content_blocks = response.content
+            if isinstance(content_blocks, list) and len(content_blocks) > 0:
+                # Extract text from content blocks
+                text_parts = []
+                for block in content_blocks:
+                    if hasattr(block, 'text'):
+                        text_parts.append(block.text)
+                return " ".join(text_parts) if text_parts else "No content returned"
+            else:
+                return str(content_blocks) if content_blocks else "No content returned"
         else:
-            # Handle the case where the response structure is different
-            return str(response)
+            return "No content returned"
     except Exception as e:
         error_message = f"Error querying {model}: {e}"
         print(error_message)

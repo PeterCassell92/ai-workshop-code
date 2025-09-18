@@ -25,7 +25,7 @@ class CohereReranker:
                 "Cohere API key is required. Set COHERE_API_KEY environment variable or pass it explicitly."
             )
 
-        self.base_url = "https://api.cohere.ai/v1/rerank"
+        self.base_url = "https://api.cohere.com/v2/rerank"
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
@@ -37,7 +37,7 @@ class CohereReranker:
         documents: List[str],
         document_ids: Optional[List[str]] = None,
         top_n: int = 10,
-        model: str = "rerank-english-v2.0",
+        model: str = "rerank-v3.5",
     ) -> List[Document]:
         """
         Rerank a list of documents based on their relevance to the query.
@@ -142,7 +142,7 @@ class CohereReranker:
         text_field: str = "text",
         id_field: str = "id",
         top_n: int = 10,
-        model: str = "rerank-english-v2.0",
+        model: str = "rerank-v3.5",
     ) -> List[Dict[str, Any]]:
         """
         Rerank a list of document dictionaries that include metadata.
@@ -187,16 +187,16 @@ if __name__ == "__main__":
 
     # Example documents
     documents = [
-        "Jeff Bezos founded Amazon in 1994 as an online bookstore.",
-        "Bezos often emphasizes the importance of customer obsession.",
-        "One of Bezos's principles is to focus on long-term thinking over short-term gains.",
-        "Bezos stepped down as CEO of Amazon in 2021.",
-        "Under Bezos's leadership, Amazon expanded into cloud computing with AWS.",
-        "Bezos believes in making high-quality decisions quickly with limited information.",
+        "Obi-Wan Kenobi was a legendary Jedi Master who served the Galactic Republic.",
+        "Ben Kenobi lived as a hermit on Tatooine, watching over Luke Skywalker.",
+        "Obi-Wan trained Anakin Skywalker, who later became Darth Vader.",
+        "Kenobi believed in the power of the Force and the Jedi Code.",
+        "Obi-Wan sacrificed himself to allow Luke and the others to escape the Death Star.",
+        "Master Kenobi was known for his wisdom and diplomatic approach to conflicts.",
     ]
 
     # Example query
-    query = "What are Jeff Bezos's business principles?"
+    query = "Who is Obi-Wan and what are his motivations?"
 
     # Rerank the documents
     results = reranker.rerank(query, documents)

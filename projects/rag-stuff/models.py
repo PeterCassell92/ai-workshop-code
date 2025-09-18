@@ -3,10 +3,7 @@ from pydantic import BaseModel, Field
 
 # List of models to query
 MODELS = [
-    # "groq/gemma2-9b-it",
-    # "groq/llama-3.2-1b-preview",
-    # "groq/llama3-8b-8192",
-    "together_ai/meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+    "claude-sonnet-4-20250514",  # Using Claude Sonnet 4 model
 ]
 
 

@@ -1,6 +1,7 @@
 from typing import List
 from quotientai import QuotientAI
 import os
+from datetime import datetime
 
 # Initialize the Quotient logger correctly
 quotient = QuotientAI(api_key=os.getenv("QUOTIENT_API_KEY"))
@@ -47,9 +48,56 @@ def evaluate_generation(question: str, model_output: str, documents: List[str]):
         return None
 
 
-# Function to print evaluation results
-def print_evaluation_results(results, max_length=250):
+# Function to write evaluation results to file
+def write_evaluation_results(results, output_dir="output"):
+    """Write the evaluation results to a markdown file with date-based filename"""
+
+    # Generate filename with current date and time
+    now = datetime.now()
+    filename = f"{now.strftime('%Y%m%d_%H%M%S')}_rag_results.md"
+    filepath = os.path.join(output_dir, filename)
+
+    # Ensure output directory exists
+    os.makedirs(output_dir, exist_ok=True)
+
+    with open(filepath, 'w', encoding='utf-8') as f:
+        # Write header
+        f.write("# RAG System Evaluation Results\n\n")
+        f.write(f"Generated on: {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        f.write("---\n\n")
+
+        for idx, result in enumerate(results):
+            # Write question header
+            f.write(f"## Question #{idx + 1}: {result.question}\n\n")
+
+            # Show document count
+            doc_count = len(result.documents)
+            f.write(f"**Documents Retrieved:** {doc_count}\n\n")
+
+            # Write model responses
+            for model, answer in result.model_responses.items():
+                # Create a cleaner model name
+                model_name = model.split("/")[-1]
+                f.write(f"### Model: {model_name}\n\n")
+                f.write(f"{answer}\n\n")
+                f.write("---\n\n")
+
+            # Add separator between questions if not the last one
+            if idx < len(results) - 1:
+                f.write("---\n\n")
+
+    print(f"✅ Results written to: {filepath}")
+    return filepath
+
+
+# Function to print evaluation results (kept for backwards compatibility)
+def print_evaluation_results(results, max_length=250, write_to_file=True):
     """Print the evaluation results with more visual formatting and shorter answers"""
+
+    # Write to file by default
+    if write_to_file:
+        filepath = write_evaluation_results(results)
+        return filepath
 
     print("\n\n" + "✨" * 30)
     print("📊  EVALUATION RESULTS SUMMARY  📊")

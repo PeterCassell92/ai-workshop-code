@@ -43,8 +43,8 @@ def process_question_with_vectorize_rerank(question: str) -> QuestionContext:
 if __name__ == "__main__":
     # Example questions
     user_queries = [
-        "what is Jeff Bezos's leadership philosophy?",
-        "how did Jeff Bezos approach risk and failure?",
+        "Who is Obi-Wan and what are his motivations?",
+        "What role does Obi-Wan play in Luke Skywalker's journey?",
     ]
 
     # Process each question and query model
