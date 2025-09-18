@@ -60,7 +60,7 @@ def process_question(question: str) -> QuestionContext:
 if __name__ == "__main__":
     # List of user queries to process
     user_queries = [
-        "what is Jeff Bezos's leadership philosophy?",
+        "Who is Obi-Wan and what are his motivations?",
     ]
 
     # Process each question and then query each model
